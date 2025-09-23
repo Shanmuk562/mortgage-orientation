@@ -1,0 +1,193 @@
+openapi: 3.0.3
+info:
+  title: Mortgage-Orientation API
+  description: |-
+    This service provides the mortgage eligibility and current interest rates
+  version: 1.0.0
+
+servers:
+  - url: "http://localhost:8086"
+    description: "Generated server url"
+
+paths:
+
+  /api/v1/mortgage/interest-rates:
+    get:
+      summary: Get current interest rates for mortgage
+      description: |
+        Returns a list of current interest rates for mortgage
+      responses:
+        '200':
+          description: Successful response with list of interest rates.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MortgageInterestRatesResponse'
+              examples:
+                success:
+                  summary: List of interest rates
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+  /api/v1/mortgage/mortgage-eligibility-check:
+    post:
+      summary: mortgage eligibility check based on income, home value, loan amount, maturity period
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MortgageEligibilityCheckRequest'
+      responses:
+        '200':
+          description: Successful response with eligibility status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MortgageEligibilityCheckResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '412':
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+
+  #---------------------------------------------------------------------------------
+  # components-Schemas
+  #---------------------------------------------------------------------------------
+components:
+  schemas:
+    MortgageEligibilityCheckRequest:
+      type: object
+      properties:
+        income:
+          type: number
+        maturityPeriod:
+          type: number
+        loanAmount:
+          type: number
+        homeValue:
+          type: number
+      required:
+        - income
+        - maturityPeriod
+        - loanAmount
+        - homeValue
+
+    MortgageInterestRate:
+      type: object
+      properties:
+        maturityPeriod:
+          type: number
+          description: maturity period
+          example: 10
+        interestRate:
+          type: number
+          description: interest rate
+          example: 3.5
+        lastUpdate:
+          type: string
+          format: date
+          description: last updated date with timestamp
+          example: "2025-01-12T11:30:00.000+00:00"
+
+    MortgageInterestRatesResponse:
+      type: object
+      properties:
+        interestRates:
+          type: array
+          items:
+            $ref: '#/components/schemas/MortgageInterestRate'
+    MortgageEligibilityCheckResponse:
+      type: object
+      properties:
+        eligible:
+          type: boolean
+        reason:
+          type: string
+        interestRate:
+          type: number
+
+    errorResponse:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/errorItem'
+    errorItem:
+      required:
+        - code
+        - message
+        - severity
+      type: object
+      properties:
+        severity:
+          $ref: '#/components/schemas/severity'
+        code:
+          type: string
+        message:
+          type: string
+        source:
+          type: string
+        target:
+          type: string
+        innerErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/innerErrorItem'
+    innerErrorItem:
+      required:
+        - code
+        - message
+        - severity
+      type: object
+      properties:
+        severity:
+          $ref: '#/components/schemas/severity'
+        code:
+          type: string
+        message:
+          type: string
+        source:
+          type: string
+        target:
+          type: string
+    severity:
+      type: string
+      enum:
+        - error
+        - critical
+        - warning
+        - info

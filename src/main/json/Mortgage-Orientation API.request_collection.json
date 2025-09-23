@@ -1,0 +1,61 @@
+{
+  "info": {
+    "name": "Mortgage-Orientation API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Mortgage eligibility check",
+      "request": {
+        "method": "POST",
+        "header": [
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"income\": 100000,\r\n    \"maturityPeriod\": 10,\r\n    \"loanAmount\": 300000,\r\n    \"homeValue\": 500000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8086/api/v1/mortgage/mortgage-eligibility-check",
+          "host": [
+            "localhost"
+          ],
+          "port": "8086",
+          "path": [
+            "api",
+            "v1",
+            "mortgage",
+            "mortgage-eligibility-check"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get current interest rates",
+      "request": {
+        "method": "GET",
+        "header": [
+        ],
+        "url": {
+          "raw": "http://localhost:8086/api/v1/mortgage/interest-rates",
+          "host": [
+            "localhost"
+          ],
+          "port": "8086",
+          "path": [
+            "api",
+            "v1",
+            "mortgage",
+            "interest-rates"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
