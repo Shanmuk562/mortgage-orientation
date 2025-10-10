@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class MortgageRuleEngine {
@@ -16,10 +17,7 @@ public class MortgageRuleEngine {
 
     public String validateLoanAmountLimit(BigDecimal income, BigDecimal loanAmount,
                                           BigDecimal homeValue) {
-        for (var rule : rules) {
-            var reason = rule.validate(income, loanAmount, homeValue);
-            if (reason != null) return reason;
-        }
-        return null;
+        return rules.stream().map(rule -> rule.validate(income, loanAmount, homeValue))
+                .filter(Objects::nonNull).findFirst().orElse(null);
     }
 }
